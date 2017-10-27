@@ -85,7 +85,6 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Add"/>
                                 <connections>
-                                    <action selector="addButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hsp-h7-yLg"/>
                                     <action selector="addGeoCache:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gE2-vu-l2g"/>
                                 </connections>
                             </button>
@@ -95,7 +94,6 @@
                                 <state key="normal" title="View Next"/>
                                 <connections>
                                     <action selector="nextCache:" destination="BYZ-38-t0r" eventType="touchUpInside" id="re5-2d-btK"/>
-                                    <action selector="viewNextButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rPX-db-Tdc"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -103,9 +101,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="cacheLabel" destination="Abv-jJ-fy8" id="66d-er-rrR"/>
                         <outlet property="creatorField" destination="9DO-Us-MBR" id="uiV-x4-AGe"/>
-                        <outlet property="detailsField" destination="8kq-lp-OGD" id="72A-Hf-Sc4"/>
-                        <outlet property="outputView" destination="Abv-jJ-fy8" id="Sic-tN-HAd"/>
+                        <outlet property="detailField" destination="8kq-lp-OGD" id="hHy-yD-qWw"/>
                         <outlet property="rewardField" destination="WdD-a5-Hrh" id="sQS-OW-q27"/>
                         <outlet property="titleField" destination="cHz-Ng-l9O" id="66y-1M-asl"/>
                     </connections>
