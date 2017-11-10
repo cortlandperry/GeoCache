@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     var cache_list: [GeoCache] = [GeoCache]();
-    var list_location: Int = 0;
+    var list_location: Int = 0; 
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,18 +42,21 @@ class ViewController: UIViewController {
     
     @IBAction func nextCache(_ sender: UIButton) {
         list_location += 1
-        let array_spot = list_location % cache_list.count
-        if let caches = loadCachesFromDefaults() {
-            cache_list = caches;
-            creatorField.text = cache_list[array_spot].creator
-            rewardField.text = cache_list[array_spot].reward
-            detailField.text = cache_list[array_spot].details
-            titleField.text = cache_list[array_spot].title
-            cacheLabel.text = cache_list[array_spot].description;
+        if cache_list.count != 0 {
+        
+            let array_spot = list_location % cache_list.count
+            if let caches = loadCachesFromDefaults() {
+                cache_list = caches;
+                creatorField.text = cache_list[array_spot].creator
+                rewardField.text = cache_list[array_spot].reward
+                detailField.text = cache_list[array_spot].details
+                titleField.text = cache_list[array_spot].title
+                cacheLabel.text = cache_list[array_spot].description;
             
 
-            
+            }
         }
+    
     }
     
  
