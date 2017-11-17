@@ -47,7 +47,7 @@ class NewCacheViewController: UIViewController {
         }
         
         if titleField.text! != "" && rewardField.text! != "" && creatorField.text! != "" && detailField.text! != "" {
-            let fields: [String: String] = ["title": titleField.text!, "details":  detailField.text!, "creator": creatorField.text!, "reward": rewardField.text!]
+            let fields: [String: Any] = ["title": titleField.text!, "details":  detailField.text!, "creator": creatorField.text!, "reward": rewardField.text!, "id": randomCacheId()]
             let loadedCache = GeoCache(fromDictionary:fields)
             cache = loadedCache
         }

@@ -6,30 +6,33 @@ struct GeoCache {
     var details: String;
     var creator: String;
     var reward: String;
+    var id: Int;
     
-    init?(fromDictionary dict: [String: String]) {
+    init?(fromDictionary dict: [String: Any]) {
         let keys = Array(dict.keys)
-        let prop_key = ["title", "details", "creator", "reward"]
+        let prop_key = ["title", "details", "creator", "reward", "id"]
         let keySet = Set(keys)
         let propSet = Set(prop_key)
         
         if propSet.isSubset(of: keySet) {
-            self.title = dict["title"]!
-            self.details = dict["details"]!
-            self.creator = dict["creator"]!
-            self.reward = dict["reward"]!
+            self.title = dict["title"] as! String
+            self.details = dict["details"] as! String
+            self.creator = dict["creator"] as! String
+            self.reward = dict["reward"] as! String
+            self.id = dict["id"] as! Int
             return;
             
         }
         return nil
     }
     
-    var dictionary: [String: String] {
+    var dictionary: [String: Any] {
         get {
-            var hold_dict: [String: String] = ["title": self.title];
+            var hold_dict: [String: Any] = ["title": self.title];
             hold_dict["details"] = self.details
             hold_dict["creator"] = self.creator
             hold_dict["reward"] = self.reward
+            hold_dict["id"] = self.id
             return hold_dict;
         }
     }
@@ -50,7 +53,7 @@ func loadCachesFromDefaults() -> [GeoCache]? {
         var cache_array: [GeoCache] = [GeoCache]();
         for cache in array {
             
-            cache_array.append(GeoCache(fromDictionary: cache as! [String: String])!)
+            cache_array.append(GeoCache(fromDictionary: cache as! [String: Any])!)
         }
         return cache_array;
     }
@@ -60,7 +63,7 @@ func loadCachesFromDefaults() -> [GeoCache]? {
 
 func saveCachesToDefaults(_ caches: [GeoCache]) {
     let defaults = UserDefaults.standard;
-    var dict_form: [[String:String]] = [[String:String]]()
+    var dict_form: [[String:Any]] = [[String:Any]]()
     for cache in caches {
         dict_form.append(cache.dictionary)
     }
@@ -68,8 +71,61 @@ func saveCachesToDefaults(_ caches: [GeoCache]) {
     
 }
 
+func randomCacheId() -> Int {
+    return Int(arc4random())
+}
 
-var apple: GeoCache = GeoCache(fromDictionary: ["title": "hello", "details": "sup", "creator": "swag", "reward": "swag"])!
+func sendCacheToServer(_ cache: GeoCache) {
+    let target = URL(string: "http://localhost:5000/createCache")
+    var request: URLRequest = URLRequest(url: target!)
+    
+    request.httpMethod = "POST"
+    let data = try? JSONSerialization.data(withJSONObject: cache.dictionary)
+    request.httpBody = data
+    
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+    let task = URLSession.shared.dataTask(with: request, completionHandler: {
+        data, response, error in
+        if let error = error {
+            print(error.localizedDescription ?? "Some kind of error")
+            return
+        }
+    })
+    task.resume()
+    
+}
+
+func loadCachesFromServer(onComplete: @escaping ([GeoCache]) -> ()) {
+    var cache_list = [GeoCache]()
+    let target = URL(string: "http://localhost:5000/getCaches")
+    var request: URLRequest = URLRequest(url: target!)
+    request.httpMethod = "GET"
+    
+    
+    let task = URLSession.shared.dataTask(with: request, completionHandler: {
+        data, response, error in
+        if let error = error {
+            print(error.localizedDescription ?? "Some kind of error")
+            return
+        }
+        let jresponse = try? JSONSerialization.jsonObject(with: data!, options: []) as! [[String: Any]]
+        if let caches = jresponse as? [[String: Any]] {
+            for item in caches {
+                cache_list.append(GeoCache(fromDictionary: item)!)
+            }
+        }
+        onComplete(cache_list)
+
+        
+        
+    })
+    task.resume()
+    
+}
+
+
+var apple: GeoCache = GeoCache(fromDictionary: ["title": "hello", "details": "sup", "creator": "swag", "reward": "swag", "id": 12])!
 
 
 
