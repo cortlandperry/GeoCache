@@ -1,4 +1,4 @@
-
+import UIKit
 import Foundation
 
 struct GeoCache {
@@ -7,13 +7,14 @@ struct GeoCache {
     var creator: String;
     var reward: String;
     var id: Int;
+    var image: UIImage?;
     
     init?(fromDictionary dict: [String: Any]) {
         let keys = Array(dict.keys)
         let prop_key = ["title", "details", "creator", "reward", "id"]
         let keySet = Set(keys)
         let propSet = Set(prop_key)
-        
+
         if propSet.isSubset(of: keySet) {
             self.title = dict["title"] as! String
             self.details = dict["details"] as! String
@@ -91,6 +92,11 @@ func sendCacheToServer(_ cache: GeoCache) {
             print(error.localizedDescription ?? "Some kind of error")
             return
         }
+        
+        let jresponse = try? JSONSerialization.jsonObject(with: data!, options: []) as! [String];
+        if jresponse![0] == "Success" {
+            sendImage(id: cache.id, image: cache.image!);
+        }
     })
     task.resume()
     
@@ -124,6 +130,50 @@ func loadCachesFromServer(onComplete: @escaping ([GeoCache]) -> ()) {
     
 }
 
+func sendImage(id: Int, image: UIImage) {
+    let target = URL(string: "http://localhost:5000/addPicture?id=<\(String(id))>");
+    var request: URLRequest = URLRequest(url: target!)
+    request.httpBody = UIImageJPEGRepresentation(image, 0.25);
+    request.httpMethod = "POST"
+    
+    let task = URLSession.shared.dataTask(with: request, completionHandler: {
+        data, response, error in
+        if let error = error {
+            print(error.localizedDescription ?? "Some kind of error")
+            return
+        }
+    })
+    task.resume();
+    
+    
+}
+
+func pullImageFromServer(id: Int, number: Int, onComplete: @escaping (UIImage) -> ()) {
+    let target = URL(string: "http://localhost:5000/getImage?id=<\(String(id))>&img=<\(String(number))>")
+    var request: URLRequest = URLRequest(url: target!)
+    request.httpMethod = "GET"
+    
+    let task = URLSession.shared.dataTask(with: request, completionHandler: {
+        data, response, error in
+        if let error = error {
+            print(error.localizedDescription ?? "Some kind of error")
+            return
+        }
+        
+        let jresponse = JSONSerialization.jsonObject(with: data!, options: [])
+        
+        
+
+        
+        
+        
+        
+    })
+    task.resume()
+
+    
+    
+}
 
 var apple: GeoCache = GeoCache(fromDictionary: ["title": "hello", "details": "sup", "creator": "swag", "reward": "swag", "id": 12])!
 
